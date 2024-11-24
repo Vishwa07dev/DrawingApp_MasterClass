@@ -7,6 +7,7 @@ canvas.height = window.innerHeight*0.6;
 //We now need to handle the mouse event
 
 let drawing = false;
+const socket = io();
 
 canvas.addEventListener('mousedown', ()=>{
     drawing = true;
@@ -28,6 +29,23 @@ canvas.addEventListener('mousemove', (e)=>{
     ctx.lineWidth = 5;
     ctx.lineCap = 'round';
     ctx.strokeStyle = "black"
+    ctx.lineTo(x,y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x,y)
+
+    //Emit the drawing data to the backend server
+    socket.emit('drawing', {x,y});
+})
+
+//Integration of the socket.io data
+socket.on('drawing', (data)=>{
+    const {x,y} = data;
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = "black"
+
     ctx.lineTo(x,y);
     ctx.stroke();
 
